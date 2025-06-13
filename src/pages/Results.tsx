@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useUpload } from '../context/UploadContext';
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -49,26 +50,8 @@ interface ScoreFactors {
   description: string;
   weight: number;
 }
-var actualData: {
-  loanOptions: LoanOption[];
-  scoreFactors: ScoreFactors[];
-  assessmentSummary: {
-    fraudScore: {
-      value: number;
-      label: string;
-    };
-  };
-  creditScore: { score: number };
-};
-let response = await fetch(
-  "https://run.mocky.io/v3/fdbdee4f-1368-4147-8072-be51bac0b369",
-);
-if (response.ok) {
-  let json = await response.json();
-  actualData = json;
 
-  console.log("🚀 ~ actualData:", actualData);
-}
+
 const Results = () => {
     document.documentElement.style.backgroundColor = '#f8fbff';
   const navigate = useNavigate();
@@ -79,7 +62,7 @@ const Results = () => {
   const files = location.state?.files || [];
   const analysisComplete = location.state?.analysisComplete || false;
   const processingTime = location.state?.processingTime || 45;
-
+const { data } = useUpload();
   // Simulated credit score (in real app, this would come from the AI analysis)
   const finalScore = 82;
   const creditGrade = getCreditGrade(finalScore);
@@ -152,8 +135,8 @@ const Results = () => {
   //   },
   // ];
 
-  var loanOptions: LoanOption[] = actualData.loanOptions;
-  var scoreFactors: ScoreFactors[] = actualData.scoreFactors;
+  var loanOptions: LoanOption[] = data.loanOptions;
+  var scoreFactors: ScoreFactors[] = data.scoreFactors;
 
   useEffect(() => {
     if (!analysisComplete) {
@@ -161,36 +144,18 @@ const Results = () => {
       return;
     }
 
-    // async function getData() {
-    //   try {
-    //     let response = await fetch(
-    //       "https://run.mocky.io/v3/da98212c-095d-4253-a302-7cedce023775",
-    //     );
-    //     if (response.ok) {
-    //       let json = await response.json();
-    //       actualData = json;
-    //     }
-    //   } catch (error) {
-    //     console.error("Network error:", error);
-    //   }
-    // }
-
-    // getData();
+   
 
     // Animate score counting up
     const timer = setTimeout(() => {
       setAnimateScore(true);
       const interval = setInterval(() => {
         setCurrentScore((prev) => {
-          if (prev >= actualData.creditScore.score) {
+          if (prev >= data.creditScore.score) {
             clearInterval(interval);
-            let val = actualData.creditScore.score;
-            console.log(
-              "🚀 ~ setCurrentScore ~ actualData.creditScore.score:",
-              actualData.creditScore.score,
-            );
-            console.log("🚀 ~ setCurrentScore ~ val:", val);
-            return val;
+           return data.creditScore.score;
+           
+           
           }
           return prev + 1;
         });
@@ -198,7 +163,7 @@ const Results = () => {
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [analysisComplete, actualData.creditScore.score, navigate]);
+  }, [analysisComplete, data.creditScore.score, navigate]);
 
   function getCreditGrade(score: number) {
     if (score >= 90)
@@ -348,13 +313,13 @@ const Results = () => {
                           439.82 - (439.82 * currentScore) / 100
                         }
                         className={`transition-all duration-1000 ease-out ${
-                          getCreditGrade(actualData.creditScore.score).color ===
+                          getCreditGrade(data.creditScore.score).color ===
                           "success"
                             ? "text-success-500"
-                            : getCreditGrade(actualData.creditScore.score)
+                            : getCreditGrade(data.creditScore.score)
                                   .color === "brand"
                               ? "text-brand-500"
-                              : getCreditGrade(actualData.creditScore.score)
+                              : getCreditGrade(data.creditScore.score)
                                     .color === "warning"
                                 ? "text-warning-500"
                                 : "text-error-500"
@@ -368,13 +333,13 @@ const Results = () => {
                           className={`text-5xl font-bold transition-all duration-500 ${
                             animateScore ? "scale-100" : "scale-75"
                           } ${
-                            getCreditGrade(actualData.creditScore.score)
+                            getCreditGrade(data.creditScore.score)
                               .color === "success"
                               ? "text-success-600"
-                              : getCreditGrade(actualData.creditScore.score)
+                              : getCreditGrade(data.creditScore.score)
                                     .color === "brand"
                                 ? "text-brand-600"
-                                : getCreditGrade(actualData.creditScore.score)
+                                : getCreditGrade(data.creditScore.score)
                                       .color === "warning"
                                   ? "text-warning-600"
                                   : "text-error-600"
@@ -391,22 +356,22 @@ const Results = () => {
 
                   <Badge
                     className={`text-base px-4 py-2 mb-4 ${
-                      getCreditGrade(actualData.creditScore.score).color ===
+                      getCreditGrade(data.creditScore.score).color ===
                       "success"
                         ? "bg-success-100 text-success-700 border-success-200"
-                        : getCreditGrade(actualData.creditScore.score).color ===
+                        : getCreditGrade(data.creditScore.score).color ===
                             "brand"
                           ? "bg-brand-100 text-brand-700 border-brand-200"
-                          : getCreditGrade(actualData.creditScore.score)
+                          : getCreditGrade(data.creditScore.score)
                                 .color === "warning"
                             ? "bg-warning-100 text-warning-700 border-warning-200"
                             : "bg-error-100 text-error-700 border-error-200"
                     }`}
                   >
-                    {getCreditGrade(actualData.creditScore.score).grade}
+                    {getCreditGrade(data.creditScore.score).grade}
                   </Badge>
                   <p className="text-sm text-slate-600 dark:text-slate-400">
-                    {getCreditGrade(actualData.creditScore.score).description}
+                    {getCreditGrade(data.creditScore.score).description}
                   </p>
                 </CardContent>
               </Card>
@@ -421,13 +386,13 @@ const Results = () => {
                     <span className="text-sm text-slate-600 dark:text-slate-400">
                Name
                     </span>
-                    <span className="font-semibold">{actualData.userDetails.name}</span>
+                    <span className="font-semibold">{data.userDetails.name}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-slate-600 dark:text-slate-400">
                     Identification Number
                     </span>
-                    <span className="font-semibold">{actualData.userDetails.identifier}</span>
+                    <span className="font-semibold">{data.userDetails.identifier}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-slate-600 dark:text-slate-400">
@@ -457,9 +422,9 @@ const Results = () => {
                       Fraud Score
                     </span>
                     <span className="font-semibold text-dark-600">
-                      {actualData?.assessmentSummary.fraudScore.value +
+                      {data?.assessmentSummary.fraudScore.value +
                         "%  (" +
-                        actualData?.assessmentSummary.fraudScore.label +
+                        data?.assessmentSummary.fraudScore.label +
                         ")"}
                     </span>
                   </div>
@@ -501,7 +466,7 @@ const Results = () => {
                     </h3>
                     <p className="text-slate-600 dark:text-slate-400 mb-6">
                       Based on your credit score of{" "}
-                      {actualData.creditScore.score}, here are the loan options
+                      {data.creditScore.score}, here are the loan options
                       available to you:
                     </p>
 

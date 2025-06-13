@@ -9,6 +9,7 @@ import Analysis from "./pages/Analysis";
 import Results from "./pages/Results";
 import NotFound from "./pages/NotFound";
 import NoResults from "./pages/NoResults";
+import {  UploadProvider } from "./context/UploadContext";
 
 const queryClient = new QueryClient();
 
@@ -22,7 +23,8 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
+      <UploadProvider>
+ <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/upload" element={<Upload />} />
           <Route path="/analysis" element={<Analysis />} />
@@ -31,6 +33,8 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+      </UploadProvider>
+       
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

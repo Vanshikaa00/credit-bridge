@@ -36,6 +36,7 @@ const Analysis = () => {
 
   const files = location.state?.files || [];
   const totalFiles = location.state?.totalFiles || 0;
+ 
 
   const analysisSteps: AnalysisStep[] = [
     {

@@ -17,7 +17,7 @@ const NoResults: React.FC<IncompleteDataPageProps> = ({
     <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 px-4 text-center">
       <AlertTriangle className="w-12 h-12 text-red-500 mb-4" />
 
-      <h1 className="text-2xl font-semibold mb-2">Application Incomplete</h1>
+      <h1 className="text-2xl font-semibold mb-2">Not enough details to process</h1>
       <p className="text-base max-w-md mb-6">{message}</p>
 
       {onBack && (
